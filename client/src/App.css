@@ -1,0 +1,164 @@
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 4rem;
+}
+
+header h1 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.status-message {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.status-message.error {
+  color: var(--expense);
+}
+
+.add-transaction-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.add-transaction-form h2 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.9rem;
+  flex: 1;
+}
+
+.field-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.field-row .field {
+  margin-bottom: 0.9rem;
+}
+
+label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+input,
+select {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.add-transaction-form button[type='submit'] {
+  width: 100%;
+  padding: 0.65rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add-transaction-form button[type='submit']:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-error {
+  color: var(--expense);
+  font-size: 0.9rem;
+  margin: 0 0 0.75rem;
+}
+
+.empty-state {
+  color: var(--text-muted);
+  padding: 1.5rem 0;
+}
+
+.transaction-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.transaction-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.6rem 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.transaction-date {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.transaction-category {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.transaction-amount {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.transaction-row.income .transaction-amount {
+  color: var(--income);
+}
+
+.transaction-row.expense .transaction-amount {
+  color: var(--expense);
+}
+
+@media (max-width: 480px) {
+  .field-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .transaction-row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'description amount'
+      'date category';
+  }
+
+  .transaction-description {
+    grid-area: description;
+  }
+  .transaction-amount {
+    grid-area: amount;
+  }
+  .transaction-date {
+    grid-area: date;
+  }
+  .transaction-category {
+    grid-area: category;
+  }
+}

@@ -1,0 +1,11 @@
+node_modules/
+dist/
+
+# Local database — your actual financial data. Never committed.
+server/data/
+
+# Environment secrets (none needed yet, but reserved for future API keys).
+.env
+.env.local
+
+.DS_Store

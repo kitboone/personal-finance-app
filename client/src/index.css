@@ -1,0 +1,33 @@
+/* Placeholder palette — will be replaced once the reference prototype's
+   "calm ledger" theme (deep spruce green / amber accent / warm neutral) is
+   wired in. For now this just keeps things readable and accessible. */
+:root {
+  --bg: #faf8f4;
+  --surface: #ffffff;
+  --text: #2b2b28;
+  --text-muted: #6b6a64;
+  --border: #e2dfd6;
+  --accent: #b5832e;
+  --income: #3f6657;
+  --expense: #a14b3f;
+  --focus: #1d6b53;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
