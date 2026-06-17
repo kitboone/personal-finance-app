@@ -3,6 +3,27 @@
 A running, plain-English log of notable decisions — not a full commit
 history (see `git log` for that).
 
+## 2026-06-17 — Phase 2 steps 3 & 4: per-user data + deployed online (COMPLETE)
+
+- **Step 3 — per-user data.** Backend now verifies the Clerk session on every
+  `/api` call and scopes every query by `user_id`; one user can never see or
+  touch another's rows. Categories seed lazily per user (each gets their own
+  8 defaults). Backend requires `CLERK_SECRET_KEY` **and**
+  `CLERK_PUBLISHABLE_KEY` (the publishable key is needed server-side to verify
+  tokens); unauthenticated `/api` calls get a JSON 401, not a redirect.
+- **Step 4 — online.** Data layer switched from `better-sqlite3` to libsql
+  (`@libsql/client`) behind a small async `db.get/all/run/batch` helper: a
+  local SQLite file in dev, hosted **Turso** (Tokyo region) in prod, chosen by
+  env vars. Deployed on **Railway** (one service builds the client + runs the
+  server; HTTPS automatic, ~$5/mo). Secrets live only in Railway variables.
+- **Gotcha learned:** `VITE_CLERK_PUBLISHABLE_KEY` is baked into the client at
+  *build* time — it must be a Railway variable before the build, or the page
+  renders blank. Documented in the README.
+- **Verified end-to-end on the live URL:** two accounts, fully isolated data,
+  over HTTPS, against Turso.
+- **Still using Clerk *test* keys** (dev instance). Optional future hardening:
+  promote to a Clerk production instance tied to the Railway domain.
+
 ## 2026-06-17 — Phase 2 step 2: Clerk authentication (frontend)
 
 - Integrated **`@clerk/react` (v6)** for sign-up, login, logout, email
