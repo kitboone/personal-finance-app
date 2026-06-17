@@ -52,6 +52,32 @@ make a read-only request to a public exchange-rate service over the
 internet — none of your personal data is included in that request, only a
 currency pair like "SGD to USD".
 
+## Deploying online (Railway + Turso)
+
+The app can also run as a private online service: [Clerk](https://clerk.com)
+for sign-in, [Turso](https://turso.tech) for the hosted database, and
+[Railway](https://railway.com) for hosting. Railway builds the client and runs
+the server as one process (it serves the built app and the API together), with
+HTTPS automatic.
+
+Set these as Railway **service variables** (never commit them):
+
+| Variable | Used by | When |
+| --- | --- | --- |
+| `CLERK_SECRET_KEY` | server | runtime |
+| `CLERK_PUBLISHABLE_KEY` | server | runtime |
+| `TURSO_DATABASE_URL` | server | runtime |
+| `TURSO_AUTH_TOKEN` | server | runtime |
+| `VITE_CLERK_PUBLISHABLE_KEY` | client | **build** |
+
+> **Gotcha:** `VITE_`-prefixed variables are baked into the client bundle at
+> **build** time by Vite — not read at runtime. If `VITE_CLERK_PUBLISHABLE_KEY`
+> is missing during the build, the deployed page renders blank (the client
+> throws on a missing key). It must be present as a Railway variable *before*
+> the build runs. Don't set `PORT` — Railway provides it and the server reads it.
+
+Locally, leave `TURSO_*` unset and the app uses the local SQLite file instead.
+
 ## Project layout / contributing
 
 See `CLAUDE.md` for the folder structure, data model, and conventions used
