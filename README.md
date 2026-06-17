@@ -7,9 +7,18 @@ locally on your own Mac. No bank connections, no cloud, no other users.
 ## Requirements
 
 - [Node.js](https://nodejs.org) (LTS — v20 or newer)
+- A `client/.env` file with a Clerk publishable key (for sign-in):
 
-That's it. The database is a local SQLite file created automatically the
-first time you run the app; there's nothing else to install or configure.
+  ```sh
+  VITE_CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
+  ```
+
+  This file is git-ignored and is **not** committed. Get the key from the
+  [Clerk dashboard](https://dashboard.clerk.com). Without it the app will
+  refuse to start (with a clear error message).
+
+The database is a local SQLite file created automatically the first time you
+run the app; there's nothing else to install or configure.
 
 ## Running it
 

@@ -1,17 +1,23 @@
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { useAuth } from '@clerk/react';
 
-// Public welcome page. The Log in / Sign up buttons route to the app for now;
-// step 2 (Clerk auth) replaces these targets with real sign-in / sign-up flows.
+// Public welcome page. If an already-signed-in user lands here, send them
+// straight to their dashboard.
 export default function Landing() {
+  const { isLoaded, isSignedIn } = useAuth();
+  if (isLoaded && isSignedIn) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return (
     <div className="landing">
       <header className="landing-nav">
         <span className="landing-brand">Ledger</span>
         <div className="landing-nav-actions">
-          <Link to="/dashboard" className="btn btn-ghost">
+          <Link to="/sign-in" className="btn btn-ghost">
             Log in
           </Link>
-          <Link to="/dashboard" className="btn btn-amber">
+          <Link to="/sign-up" className="btn btn-amber">
             Sign up
           </Link>
         </div>
@@ -24,10 +30,10 @@ export default function Landing() {
           you're doing — for you and your family, each with your own private space.
         </p>
         <div className="landing-cta">
-          <Link to="/dashboard" className="btn btn-amber btn-lg">
+          <Link to="/sign-up" className="btn btn-amber btn-lg">
             Get started
           </Link>
-          <Link to="/dashboard" className="btn btn-ghost btn-lg">
+          <Link to="/sign-in" className="btn btn-ghost btn-lg">
             Log in
           </Link>
         </div>

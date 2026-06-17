@@ -1,4 +1,5 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import { useClerk } from '@clerk/react';
 
 const LINKS = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -8,12 +9,12 @@ const LINKS = [
 ];
 
 export function NavMenu() {
-  const navigate = useNavigate();
+  const { signOut } = useClerk();
 
-  // Placeholder until Clerk auth (step 2). For now "Log out" just returns the
-  // visitor to the landing page; it will call Clerk's signOut() later.
+  // Ends the Clerk session; ClerkProvider's afterSignOutUrl="/" returns the
+  // user to the landing page.
   function handleLogout() {
-    navigate('/');
+    signOut();
   }
 
   return (

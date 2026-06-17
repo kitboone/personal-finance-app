@@ -3,6 +3,21 @@
 A running, plain-English log of notable decisions — not a full commit
 history (see `git log` for that).
 
+## 2026-06-17 — Phase 2 step 2: Clerk authentication (frontend)
+
+- Integrated **`@clerk/react` (v6)** for sign-up, login, logout, email
+  verification, and password reset — all via Clerk's prebuilt components, so
+  we never handle passwords.
+- `ClerkProvider` reads the publishable key from `VITE_CLERK_PUBLISHABLE_KEY`
+  (`client/.env`, git-ignored; documented via committed `.env.example`).
+- Added `/sign-in` and `/sign-up` pages; `RequireAuth` gates the app routes
+  (signed-out → landing); landing redirects signed-in users → dashboard;
+  nav "Log out" calls Clerk's `signOut()`; Account page shows `<UserProfile>`.
+- **Security note / not done yet:** this is a *frontend gate only*. The
+  backend does not yet verify the Clerk session or scope data by user — every
+  API call still returns all rows. Real per-user data security (the Clerk
+  secret key + `user_id` columns + scoped queries) is **step 3**.
+
 ## 2026-06-17 — Phase 2 kickoff: family accounts (planning + step 1)
 
 - **Goal:** turn the single-user local app into a small, family-only online

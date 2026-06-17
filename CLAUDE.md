@@ -58,12 +58,26 @@ personal-finance-app/
 
 ## Routing (client)
 
-`react-router-dom` drives navigation. `/` is the public landing page; the
-other routes (`/dashboard`, `/transactions`, `/budgets`, `/account`) render
-inside `AppLayout` (nav menu + page content). In production, the Express
-catch-all (`app.get('*')`) serves `index.html` for any non-`/api` path so
-deep links and refreshes work. **No auth yet** — every route is currently
-reachable; Clerk (Phase 2 step 2) will gate the app routes.
+`react-router-dom` drives navigation. `/` is the public landing page;
+`/sign-in/*` and `/sign-up/*` render Clerk's auth UI; the app routes
+(`/dashboard`, `/transactions`, `/budgets`, `/account`) render inside
+`AppLayout` (nav menu + page content), wrapped in `RequireAuth`. In
+production, the Express catch-all (`app.get('*')`) serves `index.html` for
+any non-`/api` path so deep links and refreshes work.
+
+## Auth (client — Phase 2 step 2, done)
+
+Uses **`@clerk/react`** (v6). `ClerkProvider` wraps the app in `main.jsx`
+and reads the publishable key from `VITE_CLERK_PUBLISHABLE_KEY` (in
+`client/.env`, git-ignored). `RequireAuth` (`useAuth().isSignedIn`) redirects
+signed-out visitors from app routes back to `/`; the landing page redirects
+signed-in users to `/dashboard`. Log out calls Clerk's `signOut()`; the
+Account page renders `<UserProfile />`.
+
+**Not yet done (step 3):** the backend does NOT verify the Clerk session or
+scope data by user — every API call still returns all data. That, plus the
+`user_id` columns and Clerk secret key, comes in step 3. So auth is currently
+a *frontend gate only*; it is not yet a real data-security boundary.
 
 ## Phase 2 (in progress): family accounts, online
 
