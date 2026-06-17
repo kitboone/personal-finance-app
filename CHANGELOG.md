@@ -3,6 +3,34 @@
 A running, plain-English log of notable decisions — not a full commit
 history (see `git log` for that).
 
+## 2026-06-17 — Phase 2 kickoff: family accounts (planning + step 1)
+
+- **Goal:** turn the single-user local app into a small, family-only online
+  app (not public). Brings hosting, a hosted database, and authentication
+  into scope.
+- **Approved stack:**
+  - **Auth — Clerk.** Managed provider; gives signup/login/logout/password
+    reset/email verification as drop-in components, never handling passwords
+    ourselves. Has mobile SDKs (a mobile app is a stated future goal).
+  - **Database — migrate SQLite → Turso** (hosted libSQL). It's
+    SQLite-compatible, so the existing data layer carries over with minimal
+    change; primary region pinned to Singapore.
+  - **Hosting — Railway.** Chosen over Render because a future mobile app
+    will call the Node API and Render's free-tier cold-starts hurt mobile
+    UX. Railway has no idle-sleep for ~$5/mo. Express stays a clean
+    standalone API (+ CORS) so web and mobile share it.
+- **Cost flag:** ~$5/mo (Railway); Clerk + Turso free at family scale.
+  Nothing paid signed up for without explicit OK.
+- **Data-residency flag:** going online means family financial data moves
+  off-device onto Clerk (identity) + Turso (data). Accepted as inherent to
+  the "reachable online" goal; Turso DB pinned to Singapore.
+- **Step 1 done (no backend/data changes):** added `react-router-dom`;
+  restructured the front end into pages (Landing, Dashboard, Transactions,
+  Budgets, Account); built a public landing page (calm ledger style) and a
+  consistent nav menu. The working v1 transaction flow now lives on the
+  Transactions page. Auth gating, Log in / Sign up, and Log out are
+  placeholders until step 2.
+
 ## 2026-06-16 — Project setup
 
 - **Stack:** React + Vite front end, Node/Express + SQLite (`better-sqlite3`)

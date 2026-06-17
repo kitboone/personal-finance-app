@@ -1,12 +1,224 @@
-.app {
+/* ============================================================
+   Buttons (shared)
+   ============================================================ */
+.btn {
+  display: inline-block;
+  padding: 0.6rem 1.1rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-lg {
+  padding: 0.8rem 1.5rem;
+  font-size: 1.05rem;
+}
+
+.btn-amber {
+  background: var(--amber);
+  color: #fff;
+}
+.btn-amber:hover {
+  background: var(--amber-soft);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: currentColor;
+  color: inherit;
+}
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ============================================================
+   Landing page
+   ============================================================ */
+.landing {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--spruce);
+  color: var(--on-spruce);
+}
+
+.landing-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem clamp(1rem, 5vw, 3rem);
+}
+
+.landing-brand {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.landing-nav-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.landing-hero {
+  flex: 1;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: clamp(2rem, 8vw, 5rem) clamp(1rem, 5vw, 3rem);
+  text-align: center;
+}
+
+.landing-hero h1 {
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  line-height: 1.1;
+  margin: 0 0 1rem;
+}
+
+.landing-lead {
+  font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+  color: var(--on-spruce-muted);
+  max-width: 38ch;
+  margin: 0 auto 2rem;
+}
+
+.landing-cta {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 3.5rem;
+}
+
+.landing-points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  text-align: left;
+}
+
+.landing-points li {
+  background: var(--spruce-soft);
+  border-radius: 12px;
+  padding: 1.1rem 1.2rem;
+}
+
+.landing-points strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--amber-soft);
+}
+
+.landing-footer {
+  padding: 1.25rem clamp(1rem, 5vw, 3rem);
+  background: var(--spruce-deep);
+  color: var(--on-spruce-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* ============================================================
+   App shell + navigation
+   ============================================================ */
+.app-shell {
+  min-height: 100%;
+}
+
+.nav {
+  background: var(--spruce);
+  color: var(--on-spruce);
+}
+
+.nav-inner {
+  max-width: 880px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem clamp(1rem, 4vw, 1.5rem);
+  flex-wrap: wrap;
+}
+
+.nav-brand {
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--on-spruce);
+}
+
+.nav-links {
+  display: flex;
+  gap: 0.25rem;
+  flex: 1;
+  flex-wrap: wrap;
+  overflow-x: auto;
+}
+
+.nav-link {
+  padding: 0.4rem 0.7rem;
+  border-radius: 7px;
+  text-decoration: none;
+  color: var(--on-spruce-muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.nav-link:hover {
+  color: var(--on-spruce);
+  background: var(--spruce-soft);
+}
+.nav-link.active {
+  color: var(--on-spruce);
+  background: var(--spruce-soft);
+}
+
+.nav-logout {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--on-spruce-muted);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--on-spruce);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.nav-logout:hover {
+  background: var(--spruce-soft);
+}
+
+.app-main {
   max-width: 640px;
   margin: 0 auto;
   padding: 1.5rem 1rem 4rem;
 }
 
-header h1 {
+/* ============================================================
+   Pages + placeholders
+   ============================================================ */
+.page-title {
   font-size: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin: 0 0 1.25rem;
+}
+
+.placeholder-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: var(--text-muted);
+}
+.placeholder-card ul {
+  margin: 0.5rem 0;
+  padding-left: 1.2rem;
+}
+.placeholder-note {
+  margin-top: 1rem;
+  font-style: italic;
+  color: var(--amber);
 }
 
 .status-message {
@@ -14,11 +226,13 @@ header h1 {
   text-align: center;
   color: var(--text-muted);
 }
-
 .status-message.error {
   color: var(--expense);
 }
 
+/* ============================================================
+   Add-transaction form
+   ============================================================ */
 .add-transaction-form {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -69,7 +283,7 @@ select {
   padding: 0.65rem;
   border: none;
   border-radius: 8px;
-  background: var(--accent);
+  background: var(--amber);
   color: #fff;
   font-size: 1rem;
   font-weight: 600;
@@ -87,6 +301,9 @@ select {
   margin: 0 0 0.75rem;
 }
 
+/* ============================================================
+   Transaction list
+   ============================================================ */
 .empty-state {
   color: var(--text-muted);
   padding: 1.5rem 0;

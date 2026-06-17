@@ -1,20 +1,36 @@
-/* Placeholder palette — will be replaced once the reference prototype's
-   "calm ledger" theme (deep spruce green / amber accent / warm neutral) is
-   wired in. For now this just keeps things readable and accessible. */
+/* "Calm ledger" palette — deep spruce green, a single amber accent, warm
+   neutral background. Tweak here and it flows through the whole app. */
 :root {
-  --bg: #faf8f4;
-  --surface: #ffffff;
+  /* Brand */
+  --spruce: #1f3d34;        /* deep spruce green — headers, hero, primary surfaces */
+  --spruce-deep: #16302a;   /* darker spruce for depth/footers */
+  --spruce-soft: #2f5247;   /* lifted spruce for hover/secondary */
+  --amber: #c08a2d;         /* the single accent — CTAs, highlights */
+  --amber-soft: #d8a44a;
+
+  /* Neutrals */
+  --bg: #f6f2ea;            /* warm-neutral background */
+  --surface: #fffdf8;       /* cards */
   --text: #2b2b28;
   --text-muted: #6b6a64;
-  --border: #e2dfd6;
-  --accent: #b5832e;
+  --on-spruce: #eef3f0;     /* text on spruce surfaces */
+  --on-spruce-muted: #aebfb8;
+  --border: #e4dECF;
+
+  /* Semantic */
   --income: #3f6657;
   --expense: #a14b3f;
-  --focus: #1d6b53;
+  --focus: #c08a2d;
 }
 
 * {
   box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
 }
 
 body {
@@ -22,8 +38,14 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  line-height: 1.5;
 }
 
+a {
+  color: inherit;
+}
+
+/* Visible focus everywhere, for keyboard accessibility. */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,

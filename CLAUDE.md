@@ -37,8 +37,11 @@ personal-finance-app/
 │   └── src/
 │       ├── api.js           # fetch wrapper for the backend
 │       ├── money.js         # cents <-> display string conversions
-│       ├── App.jsx
-│       └── components/
+│       ├── App.jsx          # React Router route table (landing + app pages)
+│       ├── main.jsx         # wraps App in <BrowserRouter>
+│       ├── pages/           # one component per route (Landing, Dashboard,
+│       │                    #   Transactions, Budgets, Account)
+│       └── components/      # shared UI: AppLayout, NavMenu, forms, lists
 ├── server/                  # Express + SQLite backend
 │   ├── data/                 # finance.db lives here (gitignored — real data)
 │   └── src/
@@ -52,6 +55,26 @@ personal-finance-app/
 ├── README.md                  # plain-English setup/run instructions
 └── CHANGELOG.md                # running log of notable decisions
 ```
+
+## Routing (client)
+
+`react-router-dom` drives navigation. `/` is the public landing page; the
+other routes (`/dashboard`, `/transactions`, `/budgets`, `/account`) render
+inside `AppLayout` (nav menu + page content). In production, the Express
+catch-all (`app.get('*')`) serves `index.html` for any non-`/api` path so
+deep links and refreshes work. **No auth yet** — every route is currently
+reachable; Clerk (Phase 2 step 2) will gate the app routes.
+
+## Phase 2 (in progress): family accounts, online
+
+Turning the single-user local app into a family-only online app. Approved
+stack: **Clerk** (auth — never store passwords), **Turso** (hosted,
+SQLite-compatible DB — minimal migration from local SQLite), **Railway**
+(hosting — no idle-sleep, ~$5/mo, chosen with a future mobile app in mind).
+Work order: (1) landing + nav [done], (2) Clerk auth, (3) scope all data by
+user id + migrate existing rows, (4) deploy + test. Every query must be
+scoped by user id; each new user gets their own copy of the default
+categories.
 
 ## Data model
 
