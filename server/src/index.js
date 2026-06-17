@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { clerkMiddleware, requireAuth } from '@clerk/express';
+import { clerkMiddleware, getAuth } from '@clerk/express';
 import { openDb } from './db.js';
 import { transactionsRouter } from './routes/transactions.js';
 import { categoriesRouter } from './routes/categories.js';
@@ -9,11 +9,16 @@ import { categoriesRouter } from './routes/categories.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 3001;
 
-// The Clerk secret key is required to verify sessions. Fail loudly if it's
-// missing rather than silently letting every request through unauthenticated.
-if (!process.env.CLERK_SECRET_KEY) {
+// Clerk needs both keys to verify sessions: the secret key to validate, and
+// the publishable key to resolve which Clerk instance the tokens belong to.
+// Without either, every /api request fails at runtime with a 500, so fail
+// loudly at startup instead.
+const missingKeys = ['CLERK_SECRET_KEY', 'CLERK_PUBLISHABLE_KEY'].filter(
+  (k) => !process.env[k]
+);
+if (missingKeys.length > 0) {
   console.error(
-    '[server] Missing CLERK_SECRET_KEY. Add it to server/.env (see server/.env.example).'
+    `[server] Missing ${missingKeys.join(' and ')}. Add to server/.env (see server/.env.example).`
   );
   process.exit(1);
 }
@@ -28,8 +33,19 @@ app.use(express.json());
 // without a valid session with 401 — so the data routes can trust getAuth().
 app.use(clerkMiddleware());
 
-app.use('/api/transactions', requireAuth(), transactionsRouter(db));
-app.use('/api/categories', requireAuth(), categoriesRouter(db));
+// Our /api routes are called by fetch(), not browser navigation, so a missing
+// session should return a JSON 401 the client can catch — not Clerk's default
+// redirect to a sign-in page (which would hand back HTML to a fetch call).
+function requireUser(req, res, next) {
+  const { userId } = getAuth(req);
+  if (!userId) {
+    return res.status(401).json({ errors: ['Not signed in'] });
+  }
+  next();
+}
+
+app.use('/api/transactions', requireUser, transactionsRouter(db));
+app.use('/api/categories', requireUser, categoriesRouter(db));
 
 // In production this same process serves the built client.
 const clientDist = path.join(__dirname, '..', '..', 'client', 'dist');
