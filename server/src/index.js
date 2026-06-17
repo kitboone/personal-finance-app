@@ -23,7 +23,7 @@ if (missingKeys.length > 0) {
   process.exit(1);
 }
 
-const db = openDb();
+const db = await openDb();
 const app = express();
 
 app.use(express.json());
@@ -53,6 +53,14 @@ app.use(express.static(clientDist));
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api')) return next();
   res.sendFile(path.join(clientDist, 'index.html'));
+});
+
+// Any error thrown in an async route handler lands here. Return JSON (not the
+// default HTML error page) so the client's fetch wrapper can parse it.
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  console.error('[server] unhandled error:', err);
+  res.status(500).json({ errors: ['Something went wrong.'] });
 });
 
 app.listen(PORT, () => {

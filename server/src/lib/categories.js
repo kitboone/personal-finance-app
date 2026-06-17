@@ -14,20 +14,19 @@ export const DEFAULT_CATEGORIES = [
 ];
 
 // Ensures the given user has their default categories. Runs once per user
-// (the first time they have none); a no-op thereafter. Wrapped in a
-// transaction so a user never ends up with a half-seeded set.
-export function ensureUserCategories(db, userId) {
-  const { n } = db
-    .prepare('SELECT count(*) AS n FROM categories WHERE user_id = ?')
-    .get(userId);
+// (the first time they have none); a no-op thereafter. The inserts run as a
+// single batch so a user never ends up with a half-seeded set.
+export async function ensureUserCategories(db, userId) {
+  const { n } = await db.get(
+    'SELECT count(*) AS n FROM categories WHERE user_id = ?',
+    [userId]
+  );
   if (n > 0) return;
 
-  const insert = db.prepare(
-    'INSERT INTO categories (user_id, name, color, sort_order) VALUES (?, ?, ?, ?)'
+  await db.batch(
+    DEFAULT_CATEGORIES.map((c) => ({
+      sql: 'INSERT INTO categories (user_id, name, color, sort_order) VALUES (?, ?, ?, ?)',
+      args: [userId, c.name, c.color, c.sort_order],
+    }))
   );
-  db.transaction(() => {
-    for (const c of DEFAULT_CATEGORIES) {
-      insert.run(userId, c.name, c.color, c.sort_order);
-    }
-  })();
 }

@@ -12,7 +12,8 @@ of notable decisions.
 ## How to run it
 
 Requires Node.js (v20+; developed on v24) and npm. No other system
-dependencies — SQLite is bundled via `better-sqlite3`.
+dependencies — the database is libsql (`@libsql/client`): a local SQLite
+file in development, hosted Turso in production.
 
 ```sh
 npm install   # once, from the repo root (installs both workspaces)
@@ -145,8 +146,10 @@ eventual schema doesn't surprise anyone.
   belt and suspenders, since this is financial data.
 - **API shape**: REST-ish, JSON in/out, cents for all money fields. Routes
   are one file per resource under `server/src/routes/`.
-- **No ORM**: raw SQL via `better-sqlite3` (synchronous, simple, fast for a
-  single local user). Kept deliberately small rather than reaching for an
+- **No ORM**: raw SQL via libsql (`@libsql/client`), wrapped in a tiny async
+  `db.get/all/run/batch` helper in `db.js`. The same client speaks to a local
+  SQLite file (dev) or a hosted Turso database (prod, via `TURSO_DATABASE_URL`
+  + `TURSO_AUTH_TOKEN`). Kept deliberately small rather than reaching for an
   ORM/migration framework — revisit if/when the schema grows substantially.
 - **Styling**: currently a minimal placeholder theme (see `index.css`
   variables). Intended to be replaced with the reference "calm ledger"
