@@ -28,6 +28,11 @@ async function request(path, options) {
 
 export const api = {
   getCategories: () => request('/categories'),
+  updateCategoryBudget: (id, monthlyBudgetCents) =>
+    request(`/categories/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ monthlyBudgetCents }),
+    }),
   getTransactions: (month) => request(`/transactions${month ? `?month=${month}` : ''}`),
   createTransaction: (data) =>
     request('/transactions', { method: 'POST', body: JSON.stringify(data) }),
