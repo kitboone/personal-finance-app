@@ -9,6 +9,7 @@ export default function Transactions() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
+  const [deleteError, setDeleteError] = useState(null);
 
   useEffect(() => {
     Promise.all([api.getCategories(), api.getTransactions()])
@@ -30,6 +31,19 @@ export default function Transactions() {
     setTransactions((prev) => [created, ...prev]);
   }
 
+  // Delete on the server first, then drop it from the list, so a failed
+  // request leaves the row in place (with an error shown) rather than
+  // making it vanish optimistically and reappear.
+  async function handleDelete(id) {
+    setDeleteError(null);
+    try {
+      await api.deleteTransaction(id);
+      setTransactions((prev) => prev.filter((t) => t.id !== id));
+    } catch (err) {
+      setDeleteError(err.message);
+    }
+  }
+
   return (
     <div className="page">
       <h1 className="page-title">Transactions</h1>
@@ -44,7 +58,14 @@ export default function Transactions() {
           <AddTransactionForm categories={categories} onAdd={handleAdd} />
           <section>
             <h2>Recent activity</h2>
-            <TransactionList transactions={transactions} categoriesById={categoriesById} />
+            {deleteError && (
+              <p className="form-error">Couldn't delete: {deleteError}</p>
+            )}
+            <TransactionList
+              transactions={transactions}
+              categoriesById={categoriesById}
+              onDelete={handleDelete}
+            />
           </section>
         </>
       )}

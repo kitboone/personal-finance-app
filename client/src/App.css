@@ -332,7 +332,7 @@ select {
 
 .transaction-row {
   display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  grid-template-columns: auto 1fr auto auto auto;
   gap: 0.75rem;
   align-items: baseline;
   padding: 0.6rem 0.75rem;
@@ -340,6 +340,27 @@ select {
   border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 0.95rem;
+}
+
+.transaction-delete {
+  align-self: center;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.transaction-delete:hover {
+  color: var(--expense);
+  border-color: var(--expense);
+  background: rgba(161, 75, 63, 0.06);
+}
+.transaction-delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .transaction-date {
@@ -375,7 +396,8 @@ select {
     grid-template-columns: 1fr auto;
     grid-template-areas:
       'description amount'
-      'date category';
+      'date category'
+      'delete delete';
   }
 
   .transaction-description {
@@ -389,5 +411,9 @@ select {
   }
   .transaction-category {
     grid-area: category;
+  }
+  .transaction-delete {
+    grid-area: delete;
+    justify-self: end;
   }
 }
