@@ -3,6 +3,24 @@
 A running, plain-English log of notable decisions — not a full commit
 history (see `git log` for that).
 
+## 2026-06-19 — Retirement projection page (calculator only)
+
+- Added a **Retirement** page (`/retirement`, in the nav) that projects the
+  compounded growth of retirement assets. Asset types: CPF OA / SA / MA,
+  Endowment, SG ETF, US ETF — each with an editable default annual return
+  (CPF rates reflect the SG floor: OA 2.5%, SA/MA 4%) and currency.
+- **Frontend-only, nothing persisted.** The retirement *schema* is still
+  unbuilt (see the data-model note in CLAUDE.md); this is pure in-browser
+  arithmetic, so it adds no migrations or API surface. When the schema lands,
+  this page can read real balances instead of manual input.
+- **Money stays integer cents**; compounding runs on exact cents and is only
+  rounded at display. SGD is the base — non-SGD holdings (e.g. US ETF in USD)
+  convert back with a user-supplied USD→SGD rate (default 1.35).
+- Years to project defaults to **10** (1–60). Output is two tables: a per-asset
+  summary at the horizon (with an SGD total) and a year-by-year SGD breakdown.
+- New `formatCentsIn(cents, currency)` helper in `money.js` for the non-SGD
+  display; the existing SGD `formatCents` is unchanged.
+
 ## 2026-06-17 — Phase 2 steps 3 & 4: per-user data + deployed online (COMPLETE)
 
 - **Step 3 — per-user data.** Backend now verifies the Clerk session on every

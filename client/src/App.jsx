@@ -7,6 +7,7 @@ import SignUpPage from './pages/SignUpPage.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Transactions from './pages/Transactions.jsx';
 import Budgets from './pages/Budgets.jsx';
+import RetirementProjection from './pages/RetirementProjection.jsx';
 import Account from './pages/Account.jsx';
 import './App.css';
 
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/budgets" element={<Budgets />} />
+        <Route path="/retirement" element={<RetirementProjection />} />
         <Route path="/account" element={<Account />} />
       </Route>
     </Routes>

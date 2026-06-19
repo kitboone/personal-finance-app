@@ -5,6 +5,7 @@ const LINKS = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/transactions', label: 'Transactions' },
   { to: '/budgets', label: 'Budgets' },
+  { to: '/retirement', label: 'Retirement' },
   { to: '/account', label: 'Account' },
 ];
 

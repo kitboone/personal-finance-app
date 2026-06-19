@@ -11,6 +11,20 @@ export function formatCents(cents) {
   return formatter.format(cents / 100);
 }
 
+// Formats integer cents in an arbitrary ISO currency (e.g. 'SGD', 'USD').
+// SGD stays the app's base currency; this exists for the retirement
+// projection page, where a holding can be denominated in another currency
+// before being converted back to SGD. Formatters are cached per currency.
+const formattersByCurrency = new Map([['SGD', formatter]]);
+export function formatCentsIn(cents, currency = 'SGD') {
+  let f = formattersByCurrency.get(currency);
+  if (!f) {
+    f = new Intl.NumberFormat('en-SG', { style: 'currency', currency });
+    formattersByCurrency.set(currency, f);
+  }
+  return f.format(cents / 100);
+}
+
 // Parses user input like "12.34" or "12" into integer cents. Returns null
 // if the input isn't a valid positive amount, so callers can show a
 // validation error instead of saving garbage.
