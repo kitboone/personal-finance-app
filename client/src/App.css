@@ -665,6 +665,15 @@ select {
 
 .proj-asset-row .field {
   margin-bottom: 0;
+  min-width: 0;
+}
+
+/* Grid/flex items default to min-width:auto (their intrinsic content width),
+   which lets the inputs push past the pane. Let them shrink to their cell. */
+.proj-asset-row input,
+.proj-asset-row select {
+  width: 100%;
+  min-width: 0;
 }
 
 .proj-remove {
