@@ -3,6 +3,15 @@
 A running, plain-English log of notable decisions — not a full commit
 history (see `git log` for that).
 
+## 2026-06-19 — Asset remarks field
+
+- Each retirement asset gains an optional **remarks** note (≤ 50 chars), e.g.
+  "OCBC endowment, matures 2031". New `remarks` column
+  (`004_asset_remarks.sql`, `TEXT NOT NULL DEFAULT ''` with a `length <= 50`
+  CHECK); validation caps it at 50 chars; the input enforces `maxLength`.
+- Editable in the add form and each saved asset row; shown as a column in the
+  "Value after N years" summary table.
+
 ## 2026-06-19 — Persist retirement assets per user
 
 - Retirement assets are now **saved to the database**, scoped per user, the

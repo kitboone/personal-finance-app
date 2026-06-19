@@ -669,11 +669,22 @@ select {
   align-items: end;
 }
 
+/* The remarks input spans the full row width, below the core fields. */
+.proj-remarks {
+  grid-column: 1 / -1;
+}
+
 /* Each saved row is a <form>; the per-row error spans the full width below. */
 .proj-row-error {
   grid-column: 1 / -1;
   color: var(--expense);
   font-size: 0.85rem;
+}
+
+.proj-remarks-cell {
+  color: var(--text-muted);
+  max-width: 16rem;
+  white-space: normal;
 }
 
 .proj-row-actions {

@@ -77,5 +77,10 @@ export function validateRetirementAssetInput(input) {
     errors.push('Return rate must be zero or a positive whole number of basis points.');
   }
 
+  // Remarks are optional; when present, a short free-text note (<= 50 chars).
+  if (input.remarks != null && (typeof input.remarks !== 'string' || input.remarks.length > 50)) {
+    errors.push('Remarks must be 50 characters or fewer.');
+  }
+
   return errors;
 }

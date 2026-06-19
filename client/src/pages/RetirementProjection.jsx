@@ -185,7 +185,8 @@ function AssetRow({ asset, onSaved, onDeleted }) {
     draft.assetType !== asset.asset_type ||
     draft.currency !== asset.currency ||
     parsedAmount !== asset.amount_cents ||
-    parsedBps !== asset.rate_bps;
+    parsedBps !== asset.rate_bps ||
+    draft.remarks !== (asset.remarks ?? '');
 
   function patch(next) {
     setDraft((prev) => ({ ...prev, ...next }));
@@ -207,6 +208,7 @@ function AssetRow({ asset, onSaved, onDeleted }) {
         amountCents: parsedAmount,
         currency: draft.currency,
         rateBps: parsedBps,
+        remarks: draft.remarks,
       });
       onSaved(updated);
       setDraft(toDraft(updated));
@@ -252,6 +254,16 @@ function AssetRow({ asset, onSaved, onDeleted }) {
           ×
         </button>
       </div>
+      <label className="field proj-remarks">
+        Remarks
+        <input
+          type="text"
+          maxLength={50}
+          placeholder="Optional note (max 50 chars)"
+          value={draft.remarks}
+          onChange={(e) => patch({ remarks: e.target.value })}
+        />
+      </label>
       {status === 'error' && <span className="proj-row-error">{error}</span>}
     </form>
   );
@@ -264,8 +276,7 @@ function AddAssetForm({ onCreated }) {
 
   // Picking a type seeds that type's default rate and currency.
   function changeType(typeId) {
-    const t = ASSET_BY_ID[typeId];
-    setDraft({ assetType: typeId, amount: '', currency: t.currency, rate: String(t.defaultRate) });
+    setDraft((prev) => ({ ...blankDraft(typeId), remarks: prev.remarks }));
     setStatus('idle');
   }
   function patch(next) {
@@ -290,6 +301,7 @@ function AddAssetForm({ onCreated }) {
         amountCents,
         currency: draft.currency,
         rateBps,
+        remarks: draft.remarks,
       });
       onCreated(created);
       setDraft(blankDraft('cpf_oa'));
@@ -311,6 +323,16 @@ function AddAssetForm({ onCreated }) {
             {status === 'saving' ? 'Adding…' : 'Add'}
           </button>
         </div>
+        <label className="field proj-remarks">
+          Remarks
+          <input
+            type="text"
+            maxLength={50}
+            placeholder="Optional note (max 50 chars)"
+            value={draft.remarks}
+            onChange={(e) => patch({ remarks: e.target.value })}
+          />
+        </label>
       </form>
     </section>
   );
@@ -395,6 +417,7 @@ function Results({ projection, years, fx }) {
             <thead>
               <tr>
                 <th>Asset</th>
+                <th>Remarks</th>
                 <th className="num">Starting</th>
                 <th className="num">Return</th>
                 <th className="num">Final ({years}y)</th>
@@ -405,6 +428,7 @@ function Results({ projection, years, fx }) {
               {rows.map((r) => (
                 <tr key={r.id}>
                   <td>{r.label}</td>
+                  <td className="proj-remarks-cell">{r.remarks}</td>
                   <td className="num">{formatCentsIn(r.startCents, r.currency)}</td>
                   <td className="num">{r.ratePercent}%</td>
                   <td className="num">{formatCentsIn(r.endCents, r.currency)}</td>
@@ -415,6 +439,7 @@ function Results({ projection, years, fx }) {
             <tfoot>
               <tr>
                 <td>Total (SGD)</td>
+                <td></td>
                 <td className="num">{formatCents(totalStartSgd)}</td>
                 <td className="num">—</td>
                 <td className="num">—</td>
@@ -474,11 +499,18 @@ function toDraft(asset) {
     amount: centsToInput(asset.amount_cents),
     currency: asset.currency,
     rate: bpsToInput(asset.rate_bps),
+    remarks: asset.remarks ?? '',
   };
 }
 function blankDraft(typeId) {
   const t = ASSET_BY_ID[typeId];
-  return { assetType: typeId, amount: '', currency: t.currency, rate: String(t.defaultRate) };
+  return {
+    assetType: typeId,
+    amount: '',
+    currency: t.currency,
+    rate: String(t.defaultRate),
+    remarks: '',
+  };
 }
 
 function clampYears(value) {
@@ -507,6 +539,7 @@ function computeProjection(assets, years, fx) {
     return {
       id: a.id,
       label: ASSET_BY_ID[a.asset_type]?.label ?? a.asset_type,
+      remarks: a.remarks ?? '',
       currency: a.currency,
       ratePercent: a.rate_bps / 100,
       growth,

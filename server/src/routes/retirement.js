@@ -30,11 +30,11 @@ export function retirementRouter(db) {
         return res.status(400).json({ errors });
       }
 
-      const { assetType, amountCents, currency, rateBps } = req.body;
+      const { assetType, amountCents, currency, rateBps, remarks } = req.body;
       const result = await db.run(
-        `INSERT INTO retirement_assets (user_id, asset_type, amount_cents, currency, rate_bps)
-         VALUES (?, ?, ?, ?, ?)`,
-        [userId, assetType, amountCents, currency, rateBps]
+        `INSERT INTO retirement_assets (user_id, asset_type, amount_cents, currency, rate_bps, remarks)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [userId, assetType, amountCents, currency, rateBps, remarks ?? '']
       );
 
       const created = await db.get(
@@ -63,12 +63,12 @@ export function retirementRouter(db) {
         return res.status(404).json({ errors: ['Asset not found.'] });
       }
 
-      const { assetType, amountCents, currency, rateBps } = req.body;
+      const { assetType, amountCents, currency, rateBps, remarks } = req.body;
       await db.run(
         `UPDATE retirement_assets
-         SET asset_type = ?, amount_cents = ?, currency = ?, rate_bps = ?
+         SET asset_type = ?, amount_cents = ?, currency = ?, rate_bps = ?, remarks = ?
          WHERE id = ? AND user_id = ?`,
-        [assetType, amountCents, currency, rateBps, req.params.id, userId]
+        [assetType, amountCents, currency, rateBps, remarks ?? '', req.params.id, userId]
       );
 
       const updated = await db.get(
