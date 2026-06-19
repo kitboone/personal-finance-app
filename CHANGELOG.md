@@ -3,6 +3,24 @@
 A running, plain-English log of notable decisions — not a full commit
 history (see `git log` for that).
 
+## 2026-06-19 — Persist retirement assets per user
+
+- Retirement assets are now **saved to the database**, scoped per user, the
+  same way transactions are. New `retirement_assets` table
+  (`003_retirement_assets.sql`) + user-scoped CRUD in
+  `server/src/routes/retirement.js`, wired at `/api/retirement-assets`. Every
+  query is filtered by the Clerk user id; one user can never see another's.
+- The projection page now **loads, adds, edits, and deletes** real assets
+  (add form + inline-editable saved rows with Save/Delete, like Budgets)
+  instead of holding them only in browser state.
+- **Rates stored as integer basis points** (`rate_bps`, 2.5% = 250), not
+  floats — same discipline as money-as-cents, since a return compounds money.
+  Amounts remain integer cents. DB CHECK constraints backstop the app-level
+  validation (`validateRetirementAssetInput`).
+- The projection **horizon (years) and USD→SGD FX rate stay client-side** —
+  they're view settings, not per-asset data. Balance *history over time* is
+  still future work; each row holds one current balance for now.
+
 ## 2026-06-19 — Retirement projection page (calculator only)
 
 - Added a **Retirement** page (`/retirement`, in the nav) that projects the

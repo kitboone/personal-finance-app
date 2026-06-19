@@ -129,10 +129,24 @@ Adding multi-account support later is a one-line migration
 for existing rows; the migration-runner pattern below supports this without
 touching already-applied migrations.
 
-### Retirement assets (planned, not yet built)
-Will track CPF SA/OA/MA, ETF, and endowment balances over time, in multiple
-currencies with SGD as the base. Not implemented yet — noted here so the
-eventual schema doesn't surprise anyone.
+### `retirement_assets`
+| column | type | notes |
+|---|---|---|
+| id | integer pk | |
+| user_id | text | Clerk user id; every query scoped by it |
+| asset_type | text | one of `cpf_oa`, `cpf_sa`, `cpf_ma`, `endowment`, `sg_etf`, `us_etf` (DB CHECK) |
+| amount_cents | integer | required, > 0 (app + DB CHECK) — the current balance |
+| currency | text | `'SGD'` or `'USD'` (DB CHECK); SGD is the base |
+| rate_bps | integer | assumed annual return in **basis points** (2.5% = 250); ≥ 0. Integer, not a float — a return compounds money, so precision matters |
+| created_at | text | ISO timestamp, set automatically |
+
+Added by `003_retirement_assets.sql`. Powers the Retirement projection page,
+which compounds each holding over a chosen horizon and converts non-SGD
+holdings back to SGD. CRUD lives in `server/src/routes/retirement.js`
+(user-scoped, mirroring transactions). The projection *horizon* (years) and
+the USD→SGD FX rate are client-side view settings, not stored. Per-period
+balance *history* in many currencies (the original "balances over time" idea)
+is still future work — today each row holds a single current balance.
 
 ## Conventions
 

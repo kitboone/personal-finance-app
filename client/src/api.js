@@ -39,4 +39,11 @@ export const api = {
   updateTransaction: (id, data) =>
     request(`/transactions/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteTransaction: (id) => request(`/transactions/${id}`, { method: 'DELETE' }),
+  getRetirementAssets: () => request('/retirement-assets'),
+  createRetirementAsset: (data) =>
+    request('/retirement-assets', { method: 'POST', body: JSON.stringify(data) }),
+  updateRetirementAsset: (id, data) =>
+    request(`/retirement-assets/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteRetirementAsset: (id) =>
+    request(`/retirement-assets/${id}`, { method: 'DELETE' }),
 };
