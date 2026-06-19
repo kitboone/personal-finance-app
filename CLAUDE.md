@@ -134,14 +134,16 @@ touching already-applied migrations.
 |---|---|---|
 | id | integer pk | |
 | user_id | text | Clerk user id; every query scoped by it |
-| asset_type | text | one of `cpf_oa`, `cpf_sa`, `cpf_ma`, `endowment`, `sg_etf`, `us_etf` (DB CHECK) |
+| asset_type | text | one of `cpf_oa`, `cpf_sa`, `cpf_ma`, `endowment`, `sg_etf`, `us_etf`, `other` (DB CHECK) |
 | amount_cents | integer | required, > 0 (app + DB CHECK) — the current balance |
 | currency | text | `'SGD'` or `'USD'` (DB CHECK); SGD is the base |
 | rate_bps | integer | assumed annual return in **basis points** (2.5% = 250); ≥ 0. Integer, not a float — a return compounds money, so precision matters |
 | remarks | text | optional free-text note, ≤ 50 chars (app + DB CHECK); defaults to `''` |
 | created_at | text | ISO timestamp, set automatically |
 
-Added by `003_retirement_assets.sql` (and `004_asset_remarks.sql` for `remarks`). Powers the Retirement projection page,
+Added by `003_retirement_assets.sql` (`004_asset_remarks.sql` added `remarks`;
+`006_asset_type_other.sql` added the `other` asset type via a table rebuild,
+since SQLite can't alter a CHECK in place). Powers the Retirement projection page,
 which compounds each holding over a chosen horizon and converts non-SGD
 holdings back to SGD. CRUD lives in `server/src/routes/retirement.js`
 (user-scoped, mirroring transactions). The projection *horizon* (years) and

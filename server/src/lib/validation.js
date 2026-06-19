@@ -47,6 +47,7 @@ export const RETIREMENT_ASSET_TYPES = [
   'endowment',
   'sg_etf',
   'us_etf',
+  'other',
 ];
 export const RETIREMENT_CURRENCIES = ['SGD', 'USD'];
 

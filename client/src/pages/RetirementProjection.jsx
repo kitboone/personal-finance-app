@@ -21,6 +21,7 @@ const ASSET_TYPES = [
   { id: 'endowment', label: 'Endowment', defaultRate: 3, currency: 'SGD' },
   { id: 'sg_etf', label: 'SG ETF', defaultRate: 5, currency: 'SGD' },
   { id: 'us_etf', label: 'US ETF', defaultRate: 7, currency: 'USD' },
+  { id: 'other', label: 'Other', defaultRate: 3, currency: 'SGD' },
 ];
 const ASSET_BY_ID = Object.fromEntries(ASSET_TYPES.map((a) => [a.id, a]));
 const CURRENCIES = ['SGD', 'USD'];

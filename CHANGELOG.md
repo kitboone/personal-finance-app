@@ -3,6 +3,14 @@
 A running, plain-English log of notable decisions — not a full commit
 history (see `git log` for that).
 
+## 2026-06-19 — "Other" asset type
+
+- Added **Other** as a retirement asset type (default 3%, SGD), for holdings
+  that don't fit the named buckets. Since SQLite can't alter a CHECK in place,
+  `006_asset_type_other.sql` rebuilds `retirement_assets` with the widened
+  `asset_type` CHECK, copying every row over. Also added to the app-level
+  validation list and the client's asset-type dropdown.
+
 ## 2026-06-19 — Persist projection settings + show totals
 
 - The Retirement page's **projection settings** (years horizon + USD→SGD rate)
