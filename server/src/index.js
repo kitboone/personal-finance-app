@@ -6,6 +6,7 @@ import { openDb } from './db.js';
 import { transactionsRouter } from './routes/transactions.js';
 import { categoriesRouter } from './routes/categories.js';
 import { retirementRouter } from './routes/retirement.js';
+import { settingsRouter } from './routes/settings.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 3001;
@@ -48,6 +49,7 @@ function requireUser(req, res, next) {
 app.use('/api/transactions', requireUser, transactionsRouter(db));
 app.use('/api/categories', requireUser, categoriesRouter(db));
 app.use('/api/retirement-assets', requireUser, retirementRouter(db));
+app.use('/api/settings', requireUser, settingsRouter(db));
 
 // In production this same process serves the built client.
 const clientDist = path.join(__dirname, '..', '..', 'client', 'dist');

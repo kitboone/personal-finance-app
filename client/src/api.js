@@ -46,4 +46,7 @@ export const api = {
     request(`/retirement-assets/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteRetirementAsset: (id) =>
     request(`/retirement-assets/${id}`, { method: 'DELETE' }),
+  getSettings: () => request('/settings'),
+  updateSettings: (data) =>
+    request('/settings', { method: 'PUT', body: JSON.stringify(data) }),
 };

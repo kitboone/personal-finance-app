@@ -749,6 +749,8 @@ select {
 .proj-controls {
   display: flex;
   gap: 1rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
 }
 .proj-controls .field {
   margin-bottom: 0;
@@ -802,8 +804,30 @@ select {
   background: rgba(192, 138, 45, 0.08);
 }
 
-.proj-growth {
+.proj-totals {
   margin: 0.9rem 0 0;
+  color: var(--text);
+}
+.proj-totals strong {
+  font-weight: 700;
+}
+.proj-totals-sep {
+  color: var(--text-muted);
+}
+
+.proj-settings-note {
+  margin: -0.5rem 0 0.9rem;
+}
+.proj-settings-status {
+  display: block;
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--income);
+  min-height: 1.1em;
+}
+
+.proj-growth {
+  margin: 0.35rem 0 0;
   color: var(--text-muted);
 }
 .proj-growth strong {

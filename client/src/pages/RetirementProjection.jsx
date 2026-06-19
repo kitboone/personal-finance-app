@@ -56,17 +56,33 @@ export default function RetirementProjection() {
 
   const [yearsInput, setYearsInput] = useState(String(DEFAULT_YEARS));
   const [fxInput, setFxInput] = useState(String(DEFAULT_USD_SGD));
+  // The last-persisted settings, for dirty detection. null until loaded.
+  const [savedSettings, setSavedSettings] = useState(null);
+  const [settingsStatus, setSettingsStatus] = useState('idle'); // idle | saving | saved | error
+  const [settingsError, setSettingsError] = useState(null);
 
   const years = clampYears(yearsInput);
   const fx = parseFx(fxInput);
   const hasForeign = assets.some((a) => a.currency !== 'SGD');
 
+  // The settings the projection currently uses, as stored ints, for comparison
+  // against what's persisted.
+  const yearsToSave = years;
+  const rateE4ToSave = Math.round(fx * 10000);
+  const settingsDirty =
+    savedSettings != null &&
+    (yearsToSave !== savedSettings.projection_years ||
+      rateE4ToSave !== savedSettings.usd_sgd_rate_e4);
+
   useEffect(() => {
     let cancelled = false;
-    api
-      .getRetirementAssets()
-      .then((rows) => {
-        if (!cancelled) setAssets(rows);
+    Promise.all([api.getRetirementAssets(), api.getSettings()])
+      .then(([rows, settings]) => {
+        if (cancelled) return;
+        setAssets(rows);
+        setYearsInput(String(settings.projection_years));
+        setFxInput(fxFromE4(settings.usd_sgd_rate_e4));
+        setSavedSettings(settings);
       })
       .catch((err) => {
         if (!cancelled) setLoadError(err.message);
@@ -78,6 +94,25 @@ export default function RetirementProjection() {
       cancelled = true;
     };
   }, []);
+
+  async function saveSettings() {
+    setSettingsStatus('saving');
+    setSettingsError(null);
+    try {
+      const updated = await api.updateSettings({
+        projectionYears: yearsToSave,
+        usdSgdRateE4: rateE4ToSave,
+      });
+      setSavedSettings(updated);
+      // Normalize the inputs to the stored values (e.g. clamped years).
+      setYearsInput(String(updated.projection_years));
+      setFxInput(fxFromE4(updated.usd_sgd_rate_e4));
+      setSettingsStatus('saved');
+    } catch (err) {
+      setSettingsStatus('error');
+      setSettingsError(err.message);
+    }
+  }
 
   function handleCreated(asset) {
     setAssets((prev) => [...prev, asset]);
@@ -135,6 +170,9 @@ export default function RetirementProjection() {
 
           <section className="proj-config proj-settings">
             <h2>Projection settings</h2>
+            <p className="field-hint proj-settings-note">
+              Saved to your account and reused next time.
+            </p>
             <div className="proj-controls">
               <label className="field">
                 Years to project
@@ -143,7 +181,10 @@ export default function RetirementProjection() {
                   min="1"
                   max={MAX_YEARS}
                   value={yearsInput}
-                  onChange={(e) => setYearsInput(e.target.value)}
+                  onChange={(e) => {
+                    setYearsInput(e.target.value);
+                    if (settingsStatus !== 'idle') setSettingsStatus('idle');
+                  }}
                 />
               </label>
               <label className="field">
@@ -152,7 +193,10 @@ export default function RetirementProjection() {
                   type="text"
                   inputMode="decimal"
                   value={fxInput}
-                  onChange={(e) => setFxInput(e.target.value)}
+                  onChange={(e) => {
+                    setFxInput(e.target.value);
+                    if (settingsStatus !== 'idle') setSettingsStatus('idle');
+                  }}
                 />
                 {!hasForeign && (
                   <span className="field-hint">
@@ -160,7 +204,21 @@ export default function RetirementProjection() {
                   </span>
                 )}
               </label>
+              <button
+                type="button"
+                className="proj-save"
+                onClick={saveSettings}
+                disabled={!settingsDirty || settingsStatus === 'saving'}
+              >
+                {settingsStatus === 'saving' ? 'Saving…' : 'Save'}
+              </button>
             </div>
+            <span className="proj-settings-status" aria-live="polite">
+              {settingsStatus === 'saved' && !settingsDirty && '✓ Saved'}
+              {settingsStatus === 'error' && (
+                <span className="proj-row-error">{settingsError}</span>
+              )}
+            </span>
           </section>
 
           <Results projection={projection} years={years} fx={fx} />
@@ -448,6 +506,11 @@ function Results({ projection, years, fx }) {
             </tfoot>
           </table>
         </div>
+        <p className="proj-totals">
+          Total starting value: <strong>{formatCents(totalStartSgd)}</strong>
+          <span className="proj-totals-sep"> · </span>
+          Total final value: <strong>{formatCents(totalEndSgd)}</strong>
+        </p>
         <p className="proj-growth">
           Total growth: <strong>{formatCents(totalGrowth)}</strong> over {years}{' '}
           {years === 1 ? 'year' : 'years'}
@@ -522,6 +585,10 @@ function parseFx(value) {
   const trimmed = String(value).trim();
   if (!/^\d+(\.\d+)?$/.test(trimmed)) return DEFAULT_USD_SGD;
   return Number(trimmed);
+}
+// Stored FX rate (int x 10000) -> input string. 13500 -> "1.35".
+function fxFromE4(e4) {
+  return String(e4 / 10000);
 }
 
 // Pure projection math. For each saved asset, compound the starting cents at its

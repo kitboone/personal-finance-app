@@ -145,9 +145,23 @@ Added by `003_retirement_assets.sql` (and `004_asset_remarks.sql` for `remarks`)
 which compounds each holding over a chosen horizon and converts non-SGD
 holdings back to SGD. CRUD lives in `server/src/routes/retirement.js`
 (user-scoped, mirroring transactions). The projection *horizon* (years) and
-the USD→SGD FX rate are client-side view settings, not stored. Per-period
+the USD→SGD FX rate are persisted per user in `user_settings` (below). Per-period
 balance *history* in many currencies (the original "balances over time" idea)
 is still future work — today each row holds a single current balance.
+
+### `user_settings`
+| column | type | notes |
+|---|---|---|
+| user_id | text pk | Clerk user id; one row per user |
+| projection_years | integer | Retirement page horizon; 1–60 (DB CHECK); default 10 |
+| usd_sgd_rate_e4 | integer | USD→SGD rate **× 10000** (1.35 = 13500); > 0. Integer, not a float — it scales money |
+| updated_at | text | ISO timestamp |
+
+Added by `005_user_settings.sql`. Holds the Retirement page's view settings so
+they persist across sessions/devices. CRUD in `server/src/routes/settings.js`:
+`GET /api/settings` returns the saved row or defaults; `PUT` upserts the single
+row (`ON CONFLICT(user_id)`). The per-asset data lives in `retirement_assets`;
+this is just the projection knobs.
 
 ## Conventions
 

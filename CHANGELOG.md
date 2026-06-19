@@ -3,6 +3,19 @@
 A running, plain-English log of notable decisions — not a full commit
 history (see `git log` for that).
 
+## 2026-06-19 — Persist projection settings + show totals
+
+- The Retirement page's **projection settings** (years horizon + USD→SGD rate)
+  now **persist per user**, so they survive reloads and follow you across
+  devices. New `user_settings` table (`005_user_settings.sql`, one row per
+  user) + `GET`/`PUT /api/settings` in `server/src/routes/settings.js` (PUT
+  upserts). The page loads them on mount and saves via a **Save** button in the
+  settings card (with ✓/error feedback, like Budgets).
+- FX rate stored as an **integer ×10000** (1.35 = 13500), keeping it off floats
+  like cents and basis points; years is a plain 1–60 integer (app + DB CHECK).
+- The projection now states **Total starting value** and **Total final value**
+  (SGD) just above the total-growth line.
+
 ## 2026-06-19 — Asset remarks field
 
 - Each retirement asset gains an optional **remarks** note (≤ 50 chars), e.g.

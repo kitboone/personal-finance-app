@@ -84,3 +84,33 @@ export function validateRetirementAssetInput(input) {
 
   return errors;
 }
+
+// Per-user projection settings. Years is a whole number in range; the FX rate
+// is an integer scaled by 10000 (1.35 = 13500), matching the DB column.
+export const MIN_PROJECTION_YEARS = 1;
+export const MAX_PROJECTION_YEARS = 60;
+
+export function validateSettingsInput(input) {
+  const errors = [];
+
+  if (
+    typeof input.projectionYears !== 'number' ||
+    !Number.isInteger(input.projectionYears) ||
+    input.projectionYears < MIN_PROJECTION_YEARS ||
+    input.projectionYears > MAX_PROJECTION_YEARS
+  ) {
+    errors.push(
+      `Projection years must be a whole number between ${MIN_PROJECTION_YEARS} and ${MAX_PROJECTION_YEARS}.`
+    );
+  }
+
+  if (
+    typeof input.usdSgdRateE4 !== 'number' ||
+    !Number.isInteger(input.usdSgdRateE4) ||
+    input.usdSgdRateE4 <= 0
+  ) {
+    errors.push('USD to SGD rate must be a positive number.');
+  }
+
+  return errors;
+}
