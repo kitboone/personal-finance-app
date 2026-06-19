@@ -3,6 +3,14 @@
 A running, plain-English log of notable decisions — not a full commit
 history (see `git log` for that).
 
+## 2026-06-19 — Asset mix pie chart
+
+- The Retirement page now shows a **"Current assets by category"** donut chart:
+  each asset's current value, converted to SGD and summed by asset type, with a
+  legend of value + percentage. Rendered as **pure inline SVG** (slices are a
+  circle's `stroke-dasharray` arcs) — no charting dependency, matching the
+  hand-rolled CSS bars on the Dashboard. Asset types gained palette `color`s.
+
 ## 2026-06-19 — "Other" asset type
 
 - Added **Other** as a retirement asset type (default 3%, SGD), for holdings

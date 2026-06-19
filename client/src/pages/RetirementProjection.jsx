@@ -14,14 +14,15 @@ import { formatCents, formatCentsIn, parseAmountToCents } from '../money.js';
 // and denominating currency used when adding a new row. The CPF rates reflect
 // Singapore's prevailing floor rates (OA 2.5%, SA/MA 4%); the rest are rough
 // long-run assumptions, not guarantees. The `id` matches the DB asset_type.
+// `color` (from the app palette) is used by the breakdown pie chart.
 const ASSET_TYPES = [
-  { id: 'cpf_oa', label: 'CPF OA', defaultRate: 2.5, currency: 'SGD' },
-  { id: 'cpf_sa', label: 'CPF SA', defaultRate: 4, currency: 'SGD' },
-  { id: 'cpf_ma', label: 'CPF MA', defaultRate: 4, currency: 'SGD' },
-  { id: 'endowment', label: 'Endowment', defaultRate: 3, currency: 'SGD' },
-  { id: 'sg_etf', label: 'SG ETF', defaultRate: 5, currency: 'SGD' },
-  { id: 'us_etf', label: 'US ETF', defaultRate: 7, currency: 'USD' },
-  { id: 'other', label: 'Other', defaultRate: 3, currency: 'SGD' },
+  { id: 'cpf_oa', label: 'CPF OA', defaultRate: 2.5, currency: 'SGD', color: '#3f6657' },
+  { id: 'cpf_sa', label: 'CPF SA', defaultRate: 4, currency: 'SGD', color: '#5b8a72' },
+  { id: 'cpf_ma', label: 'CPF MA', defaultRate: 4, currency: 'SGD', color: '#4d7c8a' },
+  { id: 'endowment', label: 'Endowment', defaultRate: 3, currency: 'SGD', color: '#a98548' },
+  { id: 'sg_etf', label: 'SG ETF', defaultRate: 5, currency: 'SGD', color: '#7a6f9b' },
+  { id: 'us_etf', label: 'US ETF', defaultRate: 7, currency: 'USD', color: '#b5654d' },
+  { id: 'other', label: 'Other', defaultRate: 3, currency: 'SGD', color: '#8a8478' },
 ];
 const ASSET_BY_ID = Object.fromEntries(ASSET_TYPES.map((a) => [a.id, a]));
 const CURRENCIES = ['SGD', 'USD'];
@@ -454,6 +455,84 @@ function AssetFields({ draft, onPatch, onChangeType }) {
   );
 }
 
+// Current asset mix as a donut chart: each asset's current value (converted to
+// SGD) summed by asset type. Pure SVG — slices are arcs drawn with a circle's
+// stroke-dasharray, no charting dependency. The ring starts at 12 o'clock (the
+// group is rotated -90°) and slices are laid end to end via stroke-dashoffset.
+function AssetPieChart({ rows }) {
+  const byType = new Map();
+  for (const r of rows) {
+    const entry = byType.get(r.typeId) ?? { label: r.label, color: r.color, value: 0 };
+    entry.value += r.startSgdCents;
+    byType.set(r.typeId, entry);
+  }
+  const ordered = [...byType.values()].sort((a, b) => b.value - a.value);
+  const total = ordered.reduce((sum, s) => sum + s.value, 0);
+  if (total <= 0) return null;
+
+  const size = 180;
+  const stroke = 34;
+  const radius = (size - stroke) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const center = size / 2;
+
+  // Precompute each slice's arc length and start offset (the sum of prior
+  // slices' fractions) so the render has no mutable accumulator. Counts are
+  // tiny (<= 7 types), so the O(n^2) prefix sum is negligible.
+  const slices = ordered.map((s, i) => {
+    const fraction = s.value / total;
+    const prior = ordered.slice(0, i).reduce((sum, x) => sum + x.value, 0) / total;
+    return {
+      ...s,
+      dash: `${fraction * circumference} ${circumference}`,
+      offset: -prior * circumference,
+      percent: Math.round(fraction * 100),
+    };
+  });
+
+  return (
+    <section className="dashboard-section">
+      <h2>Current assets by category</h2>
+      <div className="proj-pie">
+        <svg
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          role="img"
+          aria-label="Current assets by category"
+        >
+          <g transform={`rotate(-90 ${center} ${center})`}>
+            {slices.map((s) => (
+              <circle
+                key={s.label}
+                cx={center}
+                cy={center}
+                r={radius}
+                fill="none"
+                stroke={s.color}
+                strokeWidth={stroke}
+                strokeDasharray={s.dash}
+                strokeDashoffset={s.offset}
+              />
+            ))}
+          </g>
+        </svg>
+        <ul className="proj-legend">
+          {slices.map((s) => (
+            <li key={s.label}>
+              <span className="proj-legend-swatch" style={{ background: s.color }} />
+              <span className="proj-legend-label">{s.label}</span>
+              <span className="proj-legend-value">
+                {formatCents(s.value)} · {s.percent}%
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 function Results({ projection, years, fx }) {
   const { rows, series, totalStartSgd, totalEndSgd } = projection;
 
@@ -469,6 +548,8 @@ function Results({ projection, years, fx }) {
 
   return (
     <>
+      <AssetPieChart rows={rows} />
+
       <section className="dashboard-section">
         <h2>Value after {years} {years === 1 ? 'year' : 'years'}</h2>
         <div className="proj-table-wrap">
@@ -606,7 +687,9 @@ function computeProjection(assets, years, fx) {
     const endCents = Math.round(startCents * growth ** years);
     return {
       id: a.id,
+      typeId: a.asset_type,
       label: ASSET_BY_ID[a.asset_type]?.label ?? a.asset_type,
+      color: ASSET_BY_ID[a.asset_type]?.color ?? 'var(--text-muted)',
       remarks: a.remarks ?? '',
       currency: a.currency,
       ratePercent: a.rate_bps / 100,
