@@ -121,17 +121,18 @@ export default function RetirementProjection() {
               onChange={(e) => setYearsInput(e.target.value)}
             />
           </label>
-          {hasForeign && (
-            <label className="field">
-              USD → SGD rate
-              <input
-                type="text"
-                inputMode="decimal"
-                value={fxInput}
-                onChange={(e) => setFxInput(e.target.value)}
-              />
-            </label>
-          )}
+          <label className="field">
+            USD → SGD rate
+            <input
+              type="text"
+              inputMode="decimal"
+              value={fxInput}
+              onChange={(e) => setFxInput(e.target.value)}
+            />
+            {!hasForeign && (
+              <span className="field-hint">Applies to USD holdings (e.g. US ETF).</span>
+            )}
+          </label>
         </div>
       </section>
 

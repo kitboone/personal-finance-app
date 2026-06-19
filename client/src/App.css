@@ -714,6 +714,12 @@ select {
   max-width: 12rem;
 }
 
+.field-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
 .proj-table-wrap {
   overflow-x: auto;
 }
