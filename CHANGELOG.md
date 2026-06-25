@@ -3,6 +3,14 @@
 A running, plain-English log of notable decisions — not a full commit
 history (see `git log` for that).
 
+## 2026-06-19 — "Property" asset type
+
+- Added **Property** as a retirement asset type (default 3%, SGD), sitting
+  before the catch-all "Other" in the list. `007_asset_type_property.sql`
+  rebuilds `retirement_assets` with the widened `asset_type` CHECK (same
+  table-rebuild pattern as 006), copying every row over. Also added to the
+  validation list, the dropdown, and the pie-chart palette.
+
 ## 2026-06-19 — Asset mix pie chart
 
 - The Retirement page now shows a **"Current assets by category"** donut chart:
