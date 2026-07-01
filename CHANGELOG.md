@@ -3,6 +3,13 @@
 A running, plain-English log of notable decisions — not a full commit
 history (see `git log` for that).
 
+## 2026-06-19 — Rename ETF asset labels
+
+- Renamed the display labels **"SG ETF" → "SG stocks"** and **"US ETF" → "US
+  stocks"** on the Retirement page. UI-only: the stored `asset_type` ids
+  (`sg_etf`, `us_etf`) are unchanged, so existing rows keep working and no
+  migration is needed.
+
 ## 2026-06-19 — "Property" asset type
 
 - Added **Property** as a retirement asset type (default 3%, SGD), sitting

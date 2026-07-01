@@ -20,8 +20,8 @@ const ASSET_TYPES = [
   { id: 'cpf_sa', label: 'CPF SA', defaultRate: 4, currency: 'SGD', color: '#5b8a72' },
   { id: 'cpf_ma', label: 'CPF MA', defaultRate: 4, currency: 'SGD', color: '#4d7c8a' },
   { id: 'endowment', label: 'Endowment', defaultRate: 3, currency: 'SGD', color: '#a98548' },
-  { id: 'sg_etf', label: 'SG ETF', defaultRate: 5, currency: 'SGD', color: '#7a6f9b' },
-  { id: 'us_etf', label: 'US ETF', defaultRate: 7, currency: 'USD', color: '#b5654d' },
+  { id: 'sg_etf', label: 'SG stocks', defaultRate: 5, currency: 'SGD', color: '#7a6f9b' },
+  { id: 'us_etf', label: 'US stocks', defaultRate: 7, currency: 'USD', color: '#b5654d' },
   { id: 'property', label: 'Property', defaultRate: 3, currency: 'SGD', color: '#7d5a4f' },
   { id: 'other', label: 'Other', defaultRate: 3, currency: 'SGD', color: '#8a8478' },
 ];
@@ -203,7 +203,7 @@ export default function RetirementProjection() {
                 />
                 {!hasForeign && (
                   <span className="field-hint">
-                    Applies to USD holdings (e.g. US ETF).
+                    Applies to USD holdings (e.g. US stocks).
                   </span>
                 )}
               </label>
