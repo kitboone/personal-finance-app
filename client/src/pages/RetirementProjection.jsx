@@ -63,6 +63,9 @@ export default function RetirementProjection() {
   const [savedSettings, setSavedSettings] = useState(null);
   const [settingsStatus, setSettingsStatus] = useState('idle'); // idle | saving | saved | error
   const [settingsError, setSettingsError] = useState(null);
+  // Privacy toggle: hide the dollar amounts (tables, totals, pie legend) while
+  // keeping structure and percentages visible — handy for screenshots.
+  const [hideValues, setHideValues] = useState(false);
 
   const years = clampYears(yearsInput);
   const fx = parseFx(fxInput);
@@ -224,7 +227,25 @@ export default function RetirementProjection() {
             </span>
           </section>
 
-          <Results projection={projection} years={years} fx={fx} />
+          {assets.length > 0 && (
+            <div className="proj-privacy">
+              <button
+                type="button"
+                className="proj-privacy-toggle"
+                onClick={() => setHideValues((v) => !v)}
+                aria-pressed={hideValues}
+              >
+                {hideValues ? 'Show values' : 'Hide values'}
+              </button>
+            </div>
+          )}
+
+          <Results
+            projection={projection}
+            years={years}
+            fx={fx}
+            hideValues={hideValues}
+          />
         </>
       )}
     </div>
@@ -460,7 +481,7 @@ function AssetFields({ draft, onPatch, onChangeType }) {
 // SGD) summed by asset type. Pure SVG — slices are arcs drawn with a circle's
 // stroke-dasharray, no charting dependency. The ring starts at 12 o'clock (the
 // group is rotated -90°) and slices are laid end to end via stroke-dashoffset.
-function AssetPieChart({ rows }) {
+function AssetPieChart({ rows, hideValues }) {
   const byType = new Map();
   for (const r of rows) {
     const entry = byType.get(r.typeId) ?? { label: r.label, color: r.color, value: 0 };
@@ -524,7 +545,7 @@ function AssetPieChart({ rows }) {
               <span className="proj-legend-swatch" style={{ background: s.color }} />
               <span className="proj-legend-label">{s.label}</span>
               <span className="proj-legend-value">
-                {formatCents(s.value)} · {s.percent}%
+                {hideValues ? `${s.percent}%` : `${formatCents(s.value)} · ${s.percent}%`}
               </span>
             </li>
           ))}
@@ -534,7 +555,7 @@ function AssetPieChart({ rows }) {
   );
 }
 
-function Results({ projection, years, fx }) {
+function Results({ projection, years, fx, hideValues }) {
   const { rows, series, totalStartSgd, totalEndSgd } = projection;
 
   if (rows.length === 0) {
@@ -546,10 +567,12 @@ function Results({ projection, years, fx }) {
   }
 
   const totalGrowth = totalEndSgd - totalStartSgd;
+  // Mask any money string when values are hidden; percentages/labels stay.
+  const money = (text) => (hideValues ? '••••' : text);
 
   return (
     <>
-      <AssetPieChart rows={rows} />
+      <AssetPieChart rows={rows} hideValues={hideValues} />
 
       <section className="dashboard-section">
         <h2>Value after {years} {years === 1 ? 'year' : 'years'}</h2>
@@ -570,10 +593,10 @@ function Results({ projection, years, fx }) {
                 <tr key={r.id}>
                   <td>{r.label}</td>
                   <td className="proj-remarks-cell">{r.remarks}</td>
-                  <td className="num">{formatCentsIn(r.startCents, r.currency)}</td>
+                  <td className="num">{money(formatCentsIn(r.startCents, r.currency))}</td>
                   <td className="num">{r.ratePercent}%</td>
-                  <td className="num">{formatCentsIn(r.endCents, r.currency)}</td>
-                  <td className="num">{formatCents(r.endSgdCents)}</td>
+                  <td className="num">{money(formatCentsIn(r.endCents, r.currency))}</td>
+                  <td className="num">{money(formatCents(r.endSgdCents))}</td>
                 </tr>
               ))}
             </tbody>
@@ -581,21 +604,21 @@ function Results({ projection, years, fx }) {
               <tr>
                 <td>Total (SGD)</td>
                 <td></td>
-                <td className="num">{formatCents(totalStartSgd)}</td>
+                <td className="num">{money(formatCents(totalStartSgd))}</td>
                 <td className="num">—</td>
                 <td className="num">—</td>
-                <td className="num">{formatCents(totalEndSgd)}</td>
+                <td className="num">{money(formatCents(totalEndSgd))}</td>
               </tr>
             </tfoot>
           </table>
         </div>
         <p className="proj-totals">
-          Total starting value: <strong>{formatCents(totalStartSgd)}</strong>
+          Total starting value: <strong>{money(formatCents(totalStartSgd))}</strong>
           <span className="proj-totals-sep"> · </span>
-          Total final value: <strong>{formatCents(totalEndSgd)}</strong>
+          Total final value: <strong>{money(formatCents(totalEndSgd))}</strong>
         </p>
         <p className="proj-growth">
-          Total growth: <strong>{formatCents(totalGrowth)}</strong> over {years}{' '}
+          Total growth: <strong>{money(formatCents(totalGrowth))}</strong> over {years}{' '}
           {years === 1 ? 'year' : 'years'}
           {rows.some((r) => r.currency !== 'SGD') && ` (USD converted at ${fx} to SGD)`}.
         </p>
@@ -625,10 +648,10 @@ function Results({ projection, years, fx }) {
                   <td>{point.year}</td>
                   {rows.map((r) => (
                     <td key={r.id} className="num">
-                      {formatCents(point.perAsset[r.id])}
+                      {money(formatCents(point.perAsset[r.id]))}
                     </td>
                   ))}
-                  <td className="num">{formatCents(point.total)}</td>
+                  <td className="num">{money(formatCents(point.total))}</td>
                 </tr>
               ))}
             </tbody>

@@ -3,6 +3,14 @@
 A running, plain-English log of notable decisions — not a full commit
 history (see `git log` for that).
 
+## 2026-06-19 — Hide-values toggle (privacy)
+
+- Added a **Hide values / Show values** button to the Retirement page. When on,
+  it masks every dollar amount (the two projection tables, the totals/growth
+  lines, and the pie-chart legend) with `••••`, while leaving structure intact
+  — asset names, return %, and the pie's **percentages** stay visible. Handy
+  for screenshots. Client-only UI state; nothing persisted.
+
 ## 2026-06-19 — Rename ETF asset labels
 
 - Renamed the display labels **"SG ETF" → "SG stocks"** and **"US ETF" → "US
