@@ -41,6 +41,22 @@ Press `Ctrl+C` in the terminal to stop the app. Your data is saved
 automatically and will be there next time you run `npm run dev` — it lives
 in `server/data/finance.db`.
 
+## Install it on your phone (PWA)
+
+When the app is running online (see "Deploying online" below), it's an
+installable **Progressive Web App** — so it can live on your phone's home
+screen like a native app, with its own icon and a full-screen view (no browser
+chrome).
+
+- **iPhone/iPad (Safari):** open the site, tap **Share** → **Add to Home
+  Screen**.
+- **Android (Chrome):** open the site, tap the **⋮** menu → **Install app**
+  (or **Add to Home Screen**).
+
+It's the same app and the same account as the browser version — nothing extra
+to download. Offline, it still opens (the last-loaded shell), but viewing or
+saving data needs a connection.
+
 ## Where your data lives
 
 Everything you enter is stored in a single file on your own machine:

@@ -24,3 +24,13 @@ createRoot(document.getElementById('root')).render(
     </ClerkProvider>
   </StrictMode>
 );
+
+// Register the PWA service worker in production only. In dev, Vite serves fresh
+// modules and a caching SW would just get in the way.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      // Non-fatal: the app works without the SW, just without offline caching.
+    });
+  });
+}

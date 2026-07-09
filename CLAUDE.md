@@ -188,7 +188,24 @@ this is just the projection knobs.
   prototype's palette (deep spruce green / amber accent / warm neutral) once
   shared.
 
+## PWA (installable mobile app)
+
+The web app is an installable **PWA** — "Add to Home Screen" gives it an app
+icon and a standalone full-screen view on iOS/Android; no separate codebase.
+It reuses 100% of the web UI and the existing user-scoped API. Pieces:
+`client/public/manifest.webmanifest` (name, theme, icons), the PNG icons in
+`client/public/icons/` (generated once by a small zero-dependency script, since
+no image tooling was available), `client/public/sw.js` (a hand-rolled service
+worker — network-first for navigations, cache-first for hashed assets, and it
+**never** caches `/api` or cross-origin Clerk requests), and the PWA
+`<meta>`/`<link>` tags in `index.html`. The service worker is registered in
+`main.jsx` **in production only** (`import.meta.env.PROD`), so dev stays
+cache-free. Offline support is app-shell only — live data still needs the
+network (and Clerk for auth).
+
 ## Out of scope (do not build without explicit sign-off)
 
-Bank/account syncing, multiple accounts, multi-user/login, recurring
-transactions, reports/exports/multi-month trends, mobile app, cloud hosting.
+Bank/account syncing, multiple accounts, recurring transactions,
+reports/exports/multi-month trends, a separate native app (React Native /
+app-store build). (Multi-user/login, cloud hosting, and an installable PWA
+mobile experience are now done.)
