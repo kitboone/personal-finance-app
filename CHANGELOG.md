@@ -3,6 +3,14 @@
 A running, plain-English log of notable decisions — not a full commit
 history (see `git log` for that).
 
+## 2026-06-19 — "Cash" asset type
+
+- Added **Cash** as a retirement asset type (default 0.5%, SGD), for savings /
+  liquid holdings. `008_asset_type_cash.sql` rebuilds `retirement_assets` with
+  the widened `asset_type` CHECK (same table-rebuild pattern as 006/007),
+  copying every row over. Also added to the validation list, the dropdown, and
+  the pie-chart palette.
+
 ## 2026-06-19 — PWA: installable mobile app
 
 - The web app is now an **installable PWA** — "Add to Home Screen" on iOS/
