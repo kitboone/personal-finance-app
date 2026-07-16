@@ -134,7 +134,7 @@ touching already-applied migrations.
 |---|---|---|
 | id | integer pk | |
 | user_id | text | Clerk user id; every query scoped by it |
-| asset_type | text | one of `cpf_oa`, `cpf_sa`, `cpf_ma`, `endowment`, `sg_etf`, `us_etf`, `cash`, `property`, `other` (DB CHECK) |
+| asset_type | text | one of `cpf_oa`, `cpf_sa`, `cpf_ma`, `endowment`, `sg_etf`, `us_etf`, `cash`, `equity_note`, `property`, `other` (DB CHECK) |
 | amount_cents | integer | required, > 0 (app + DB CHECK) — the current balance |
 | currency | text | `'SGD'` or `'USD'` (DB CHECK); SGD is the base |
 | rate_bps | integer | assumed annual return in **basis points** (2.5% = 250); ≥ 0. Integer, not a float — a return compounds money, so precision matters |

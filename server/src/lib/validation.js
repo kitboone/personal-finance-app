@@ -48,6 +48,7 @@ export const RETIREMENT_ASSET_TYPES = [
   'sg_etf',
   'us_etf',
   'cash',
+  'equity_note',
   'property',
   'other',
 ];
