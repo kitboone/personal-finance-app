@@ -907,6 +907,12 @@ select {
   font-size: 0.88rem;
 }
 
+.proj-note-muted {
+  margin: 0.6rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
 @media (max-width: 560px) {
   .proj-asset-row {
     grid-template-columns: 1fr 1fr;

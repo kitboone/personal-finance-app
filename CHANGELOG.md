@@ -3,6 +3,14 @@
 A running, plain-English log of notable decisions — not a full commit
 history (see `git log` for that).
 
+## 2026-06-19 — Liquid vs non-liquid sub-totals
+
+- The Retirement page's projection now shows a **"By liquidity"** table with
+  sub-totals of starting value, final value, and gain for **Liquid** vs
+  **Non-liquid** assets (plus the overall total). Non-liquid = CPF (OA/SA/MA)
+  and Property; everything else is liquid. All in SGD, summed from the
+  per-asset rows; respects the hide-values toggle. Frontend-only.
+
 ## 2026-06-19 — "Equity Note" asset type
 
 - Added **Equity Note** as a retirement asset type (default 6%, SGD), for

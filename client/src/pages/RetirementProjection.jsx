@@ -30,6 +30,11 @@ const ASSET_TYPES = [
 const ASSET_BY_ID = Object.fromEntries(ASSET_TYPES.map((a) => [a.id, a]));
 const CURRENCIES = ['SGD', 'USD'];
 
+// Liquidity split for the sub-totals: CPF (all three accounts) and Property are
+// treated as non-liquid; everything else (endowment, ETFs, cash, equity notes,
+// other) is liquid.
+const NON_LIQUID_TYPES = new Set(['cpf_oa', 'cpf_sa', 'cpf_ma', 'property']);
+
 const DEFAULT_YEARS = 10;
 const MAX_YEARS = 60;
 const DEFAULT_USD_SGD = 1.35;
@@ -572,6 +577,18 @@ function Results({ projection, years, fx, hideValues }) {
   // Mask any money string when values are hidden; percentages/labels stay.
   const money = (text) => (hideValues ? '••••' : text);
 
+  // Liquid vs non-liquid sub-totals (all in SGD), summed from the per-asset
+  // rows. Both groups always shown so the split is explicit even when empty.
+  const sumGroup = (predicate) =>
+    rows.filter(predicate).reduce(
+      (acc, r) => ({ start: acc.start + r.startSgdCents, end: acc.end + r.endSgdCents }),
+      { start: 0, end: 0 }
+    );
+  const liquidityGroups = [
+    { key: 'liquid', label: 'Liquid', ...sumGroup((r) => !NON_LIQUID_TYPES.has(r.typeId)) },
+    { key: 'nonliquid', label: 'Non-liquid', ...sumGroup((r) => NON_LIQUID_TYPES.has(r.typeId)) },
+  ];
+
   return (
     <>
       <AssetPieChart rows={rows} hideValues={hideValues} />
@@ -623,6 +640,43 @@ function Results({ projection, years, fx, hideValues }) {
           Total growth: <strong>{money(formatCents(totalGrowth))}</strong> over {years}{' '}
           {years === 1 ? 'year' : 'years'}
           {rows.some((r) => r.currency !== 'SGD') && ` (USD converted at ${fx} to SGD)`}.
+        </p>
+      </section>
+
+      <section className="dashboard-section">
+        <h2>By liquidity (SGD)</h2>
+        <div className="proj-table-wrap">
+          <table className="proj-table">
+            <thead>
+              <tr>
+                <th>Group</th>
+                <th className="num">Starting</th>
+                <th className="num">Final ({years}y)</th>
+                <th className="num">Gain</th>
+              </tr>
+            </thead>
+            <tbody>
+              {liquidityGroups.map((g) => (
+                <tr key={g.key}>
+                  <td>{g.label}</td>
+                  <td className="num">{money(formatCents(g.start))}</td>
+                  <td className="num">{money(formatCents(g.end))}</td>
+                  <td className="num">{money(formatCents(g.end - g.start))}</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>Total</td>
+                <td className="num">{money(formatCents(totalStartSgd))}</td>
+                <td className="num">{money(formatCents(totalEndSgd))}</td>
+                <td className="num">{money(formatCents(totalGrowth))}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <p className="proj-note-muted">
+          Non-liquid = CPF (OA/SA/MA) and Property; everything else is liquid.
         </p>
       </section>
 
