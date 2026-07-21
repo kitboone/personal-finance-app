@@ -24,16 +24,17 @@ const ASSET_TYPES = [
   { id: 'us_etf', label: 'US stocks', defaultRate: 7, currency: 'USD', color: '#b5654d' },
   { id: 'cash', label: 'Cash', defaultRate: 0.5, currency: 'SGD', color: '#3d8a8a' },
   { id: 'equity_note', label: 'Equity Note', defaultRate: 6, currency: 'SGD', color: '#45658a' },
+  { id: 'business', label: 'Business', defaultRate: 8, currency: 'SGD', color: '#8a4d6f' },
   { id: 'property', label: 'Property', defaultRate: 3, currency: 'SGD', color: '#7d5a4f' },
   { id: 'other', label: 'Other', defaultRate: 3, currency: 'SGD', color: '#8a8478' },
 ];
 const ASSET_BY_ID = Object.fromEntries(ASSET_TYPES.map((a) => [a.id, a]));
 const CURRENCIES = ['SGD', 'USD'];
 
-// Liquidity split for the sub-totals: CPF (all three accounts) and Property are
-// treated as non-liquid; everything else (endowment, ETFs, cash, equity notes,
-// other) is liquid.
-const NON_LIQUID_TYPES = new Set(['cpf_oa', 'cpf_sa', 'cpf_ma', 'property']);
+// Liquidity split for the sub-totals: CPF (all three accounts), Property, and
+// Business are treated as non-liquid; everything else (endowment, ETFs, cash,
+// equity notes, other) is liquid.
+const NON_LIQUID_TYPES = new Set(['cpf_oa', 'cpf_sa', 'cpf_ma', 'property', 'business']);
 
 const DEFAULT_YEARS = 10;
 const MAX_YEARS = 60;
@@ -676,7 +677,8 @@ function Results({ projection, years, fx, hideValues }) {
           </table>
         </div>
         <p className="proj-note-muted">
-          Non-liquid = CPF (OA/SA/MA) and Property; everything else is liquid.
+          Non-liquid = CPF (OA/SA/MA), Property, and Business; everything else is
+          liquid.
         </p>
       </section>
 

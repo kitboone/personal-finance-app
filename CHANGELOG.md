@@ -3,6 +3,15 @@
 A running, plain-English log of notable decisions — not a full commit
 history (see `git log` for that).
 
+## 2026-06-19 — "Business" asset type (non-liquid)
+
+- Added **Business** as a retirement asset type (default 8%, SGD).
+  `010_asset_type_business.sql` rebuilds `retirement_assets` with the widened
+  `asset_type` CHECK (same table-rebuild pattern as 006–009), copying every row
+  over. Added to the validation list, dropdown, and pie palette.
+- Classified as **non-liquid** in the liquidity sub-totals (alongside CPF and
+  Property); the caption was updated to match.
+
 ## 2026-06-19 — Liquid vs non-liquid sub-totals
 
 - The Retirement page's projection now shows a **"By liquidity"** table with
